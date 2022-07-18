@@ -7,7 +7,7 @@ spec:
     storage: 500Gi
   accessModes:
     - ReadWriteOnce
-  storageClassName: standard
+  storageClassName: manual
   persistentVolumeReclaimPolicy: Retain
   gcePersistentDisk:
     pdName: mysql

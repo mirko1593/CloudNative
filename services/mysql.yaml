@@ -10,5 +10,4 @@ spec:
     targetPort: 3306
   selector:
     app: mysql
-  clusterIP: None
 
