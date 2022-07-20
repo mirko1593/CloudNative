@@ -1,29 +1,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: details-v1
+  name: productpage-v1
   labels:
-    app: details
+    app: productpage
     version: v1
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: details
+      app: productpage
       version: v1
   template:
     metadata:
       labels:
-        app: details
+        app: productpage
         version: v1
     spec:
-      serviceAccountName: bookinfo-details
+      serviceAccountName: bookinfo-productpage
       containers:
-      - name: details
-        image: docker.io/istio/examples-bookinfo-details-v1:1.16.4
+      - name: productpage
+        image: docker.io/istio/examples-bookinfo-productpage-v1:1.16.4
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9080
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
         securityContext:
           runAsUser: 1000
-
+      volumes:
+      - name: tmp
+        emptyDir: {}
