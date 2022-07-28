@@ -8,4 +8,4 @@ RUN go build
 FROM alpine:3.14
 COPY --from=service_builder /service/. /service
 WORKDIR /service
-CMD ["./service"]
+CMD ["./service-a"]
