@@ -27,6 +27,12 @@ func main() {
 		w.Write([]byte(str))
 	})
 
+	http.HandleFunc("/liveness", func(w http.ResponseWriter, r *http.Request) {
+		str := fmt.Sprintf("%s: Hostname: %s, IP: %s: status: ok", serviceName, hostname, ip)
+
+		w.Write([]byte(str))
+	})
+
 	log.Printf("Start Service %s and Listen At: 8080\n", serviceName)
 
 	http.ListenAndServe(":8080", nil)
