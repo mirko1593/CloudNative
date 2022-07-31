@@ -30,6 +30,8 @@ func main() {
 	http.HandleFunc("/liveness", func(w http.ResponseWriter, r *http.Request) {
 		str := fmt.Sprintf("%s: Hostname: %s, IP: %s: status: ok", serviceName, hostname, ip)
 
+		log.Println("Serving Liveness Endpoint: ", str)
+
 		w.Write([]byte(str))
 	})
 
