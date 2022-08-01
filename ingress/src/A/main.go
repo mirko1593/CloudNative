@@ -33,7 +33,7 @@ func main() {
 	http.HandleFunc("/liveness", func(w http.ResponseWriter, r *http.Request) {
 		str := fmt.Sprintf("%s: Hostname: %s, IP: %s", serviceName, hostname, ip)
 
-		if time.Now().Sub(now) < time.Second*7 {
+		if time.Now().Sub(now) < time.Second*8 {
 			log.Println("Liveness Endpoint: ", str+": IS NOT ALIVE")
 			w.WriteHeader(http.StatusBadGateway)
 			return
