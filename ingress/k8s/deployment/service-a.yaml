@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: service-a
-        image: docker.io/mirkolabs/service-a:0.0.4
+        image: docker.io/mirkolabs/service-a:0.0.7
         ports:
         - containerPort: 8080
         livenessProbe:
@@ -25,3 +25,9 @@ spec:
             port: 8080
           initialDelaySeconds: 3
           periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
