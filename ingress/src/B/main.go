@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"time"
 )
 
 const serviceName = "BBBBBBBBBB"
@@ -21,8 +22,38 @@ func main() {
 		log.Fatalln(serviceName + ": Cannot Get IP")
 	}
 
+	now := time.Now()
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		str := fmt.Sprintf("%s: Hostname: %s, IP: %s", serviceName, hostname, ip)
+
+		w.Write([]byte(str))
+	})
+
+	http.HandleFunc("/liveness", func(w http.ResponseWriter, r *http.Request) {
+		str := fmt.Sprintf("%s: Hostname: %s, IP: %s", serviceName, hostname, ip)
+
+		if time.Now().Sub(now) < time.Second*8 {
+			log.Println("Liveness Endpoint: ", str+": IS NOT ALIVE")
+			w.WriteHeader(http.StatusBadGateway)
+			return
+		}
+
+		log.Println("Liveness Endpoint: ", str+": IS ALIVE")
+
+		w.Write([]byte(str))
+	})
+
+	http.HandleFunc("/readiness", func(w http.ResponseWriter, r *http.Request) {
+		str := fmt.Sprintf("%s: Hostname: %s, IP: %s", serviceName, hostname, ip)
+
+		if time.Now().Sub(now) < time.Second*11 {
+			log.Println("Liveness Endpoint: ", str+": IS NOT READY")
+			w.WriteHeader(http.StatusBadGateway)
+			return
+		}
+
+		log.Println("Readiness Endpoint: ", str+": IS READY")
 
 		w.Write([]byte(str))
 	})
