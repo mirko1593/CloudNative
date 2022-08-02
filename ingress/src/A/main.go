@@ -58,6 +58,14 @@ func main() {
 		w.Write([]byte(str))
 	})
 
+	http.HandleFunc("/call", func(w http.ResponseWriter, r *http.Request) {
+		str := fmt.Sprintf("HELLO: %s FROM Hostname: %s, IP: %s", serviceName, hostname, ip)
+
+		// http.Get("")
+
+		w.Write([]byte(str))
+	})
+
 	log.Printf("Start Service %s and Listen At: 8080\n", serviceName)
 
 	http.ListenAndServe(":8080", nil)
