@@ -17,7 +17,7 @@ spec:
             port:
               number: 80
       - path: /service-a
-        pathType: Prefix
+        pathType: Exact
         backend:
           service:
             name: service-a

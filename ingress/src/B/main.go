@@ -58,7 +58,7 @@ func main() {
 		w.Write([]byte(str))
 	})
 
-	http.HandleFunc("/call", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
 		str := fmt.Sprintf("HELLO: %s FROM Hostname: %s, IP: %s", serviceName, hostname, ip)
 
 		w.Write([]byte(str))

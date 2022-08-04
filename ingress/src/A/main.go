@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"net/http"
@@ -41,7 +42,7 @@ func main() {
 
 		log.Println("Liveness Endpoint: ", str+": IS ALIVE")
 
-		w.Write([]byte(str))
+		w.Write([]byte(str + ": IS ALIVE"))
 	})
 
 	http.HandleFunc("/readiness", func(w http.ResponseWriter, r *http.Request) {
@@ -55,15 +56,24 @@ func main() {
 
 		log.Println("Readiness Endpoint: ", str+": IS READY")
 
-		w.Write([]byte(str))
+		w.Write([]byte(str + ": IS READY"))
 	})
 
-	http.HandleFunc("/call", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/a-to-b", func(w http.ResponseWriter, r *http.Request) {
 		str := fmt.Sprintf("HELLO: %s FROM Hostname: %s, IP: %s", serviceName, hostname, ip)
 
-		// http.Get("")
+		rsp, err := http.Get("http://service-b.ingresslabs.svc.cluster.local/api")
+		if err != nil {
+			log.Printf("A-to-B: err: %s", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(fmt.Sprintf("A-to-B: err: %s", err)))
+			return
+		}
+		defer rsp.Body.Close()
 
-		w.Write([]byte(str))
+		c, _ := io.ReadAll(rsp.Body)
+
+		w.Write([]byte(str + string(c)))
 	})
 
 	log.Printf("Start Service %s and Listen At: 8080\n", serviceName)
