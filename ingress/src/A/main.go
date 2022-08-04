@@ -8,7 +8,6 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"time"
 )
 
 const serviceName = "AAAAAAAAAA"
@@ -23,22 +22,32 @@ func main() {
 		log.Fatalln(serviceName + ": Cannot Get IP")
 	}
 
-	now := time.Now()
-
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		str := fmt.Sprintf("%s: Hostname: %s, IP: %s", serviceName, hostname, ip)
+		str := fmt.Sprintf("%s: Hostname: %s, IP: %s, path: %s", serviceName, hostname, ip, r.URL)
 
-		w.Write([]byte(str))
+		rsp, err := http.Get("http://service-b.ingresslabs.svc.cluster.local/api")
+		if err != nil {
+			log.Printf("A-to-B: err: %s", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(fmt.Sprintf("A-to-B: err: %s", err)))
+			return
+		}
+		defer rsp.Body.Close()
+
+		c, _ := io.ReadAll(rsp.Body)
+
+		w.Write([]byte(str + string(c)))
 	})
 
+	// now := time.Now()
 	http.HandleFunc("/liveness", func(w http.ResponseWriter, r *http.Request) {
 		str := fmt.Sprintf("%s: Hostname: %s, IP: %s", serviceName, hostname, ip)
 
-		if time.Now().Sub(now) < time.Second*8 {
-			log.Println("Liveness Endpoint: ", str+": IS NOT ALIVE")
-			w.WriteHeader(http.StatusBadGateway)
-			return
-		}
+		// if time.Now().Sub(now) < time.Second*8 {
+		// 	log.Println("Liveness Endpoint: ", str+": IS NOT ALIVE")
+		// 	w.WriteHeader(http.StatusBadGateway)
+		// 	return
+		// }
 
 		log.Println("Liveness Endpoint: ", str+": IS ALIVE")
 
@@ -48,11 +57,11 @@ func main() {
 	http.HandleFunc("/readiness", func(w http.ResponseWriter, r *http.Request) {
 		str := fmt.Sprintf("%s: Hostname: %s, IP: %s", serviceName, hostname, ip)
 
-		if time.Now().Sub(now) < time.Second*11 {
-			log.Println("Liveness Endpoint: ", str+": IS NOT READY")
-			w.WriteHeader(http.StatusBadGateway)
-			return
-		}
+		// if time.Now().Sub(now) < time.Second*11 {
+		// 	log.Println("Liveness Endpoint: ", str+": IS NOT READY")
+		// 	w.WriteHeader(http.StatusBadGateway)
+		// 	return
+		// }
 
 		log.Println("Readiness Endpoint: ", str+": IS READY")
 
