@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: service-a
-        image: docker.io/mirkolabs/service-a:0.0.12
+        image: docker.io/mirkolabs/service-a:0.0.15
         ports:
         - containerPort: 8080
         livenessProbe:
