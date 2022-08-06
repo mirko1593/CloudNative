@@ -13,3 +13,8 @@ export GATEWAY_URL=$INGRESS_HOST:$INGRESS_PORT
 ```shell
 for i in $(seq 1 100); do curl -s -o /dev/null "http://$GATEWAY_URL/productpage"; done
 ```
+
+**TODO:**
+1. use API Gateway to handle HTTPs
+2. terminate SSL 
+3. send plain http to Service
