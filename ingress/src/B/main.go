@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"log"
@@ -23,7 +24,6 @@ func main() {
 	}
 
 	now := time.Now()
-
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		str := fmt.Sprintf("%s: Hostname: %s, IP: %s", serviceName, hostname, ip)
 
@@ -66,7 +66,27 @@ func main() {
 
 	log.Printf("Start Service %s and Listen At: 8080\n", serviceName)
 
-	http.ListenAndServe(":8080", nil)
+	server := getServer()
+
+	// server.ListenAndServeTLS("cert.pem", "key.pem")
+	server.ListenAndServe()
+}
+
+func getServer() *http.Server {
+	// data, _ := os.ReadFile("./minica.pem")
+	// cp, _ := x509.SystemCertPool()
+	// cp.AppendCertsFromPEM(data)
+
+	tls := &tls.Config{
+		// RootCAs: cp,
+	}
+
+	server := &http.Server{
+		Addr:      ":8080",
+		TLSConfig: tls,
+	}
+
+	return server
 }
 
 func getIP() (string, error) {

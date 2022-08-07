@@ -4,4 +4,7 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
+and	main.go	/^		\/\/ check the address type and if it is not a loopback the display it$/;"	d
+getIP	main.go	/^func getIP() (string, error) {$/;"	d
+getServer	main.go	/^func getServer() *http.Server {$/;"	d
 main	main.go	/^func main() {$/;"	d
