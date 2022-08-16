@@ -15,6 +15,6 @@ spec:
         prefix: /delay
     route:
     - destination:
-        host: httpbin
         port:
           number: 8000
+        host: httpbin
