@@ -1,57 +1,59 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: sleep
+  name: httpbin
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: sleep
+  name: httpbin
+  labels:
+    app: httpbin
+    service: httpbin
 spec:
   ports:
-  - port: 80
-    name: http
+  - name: http
+    port: 8000
+    targetPort: 80
   selector:
-    app: sleep
+    app: httpbin
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   creationTimestamp: null
-  name: sleep
+  name: httpbin
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: sleep
+      app: httpbin
+      version: v1
   strategy: {}
   template:
     metadata:
       annotations:
-        kubectl.kubernetes.io/default-container: sleep
-        kubectl.kubernetes.io/default-logs-container: sleep
+        kubectl.kubernetes.io/default-container: httpbin
+        kubectl.kubernetes.io/default-logs-container: httpbin
         prometheus.io/path: /stats/prometheus
         prometheus.io/port: "15020"
         prometheus.io/scrape: "true"
         sidecar.istio.io/status: '{"initContainers":["istio-init"],"containers":["istio-proxy"],"volumes":["workload-socket","workload-certs","istio-envoy","istio-data","istio-podinfo","istio-token","istiod-ca-cert"],"imagePullSecrets":null,"revision":"default"}'
       creationTimestamp: null
       labels:
-        app: sleep
+        app: httpbin
         security.istio.io/tlsMode: istio
-        service.istio.io/canonical-name: sleep
-        service.istio.io/canonical-revision: latest
+        service.istio.io/canonical-name: httpbin
+        service.istio.io/canonical-revision: v1
+        version: v1
     spec:
       containers:
-      - command:
-        - /bin/sleep
-        - 3650d
-        image: curlimages/curl
+      - image: docker.io/kennethreitz/httpbin
         imagePullPolicy: IfNotPresent
-        name: sleep
+        name: httpbin
+        ports:
+        - containerPort: 80
         resources: {}
-        volumeMounts:
-        - mountPath: /etc/sleep/tls
-          name: secret-volume
       - args:
         - proxy
         - sidecar
@@ -95,9 +97,10 @@ spec:
         - name: ISTIO_META_POD_PORTS
           value: |-
             [
+                {"containerPort":80}
             ]
         - name: ISTIO_META_APP_CONTAINERS
-          value: sleep
+          value: httpbin
         - name: ISTIO_META_CLUSTER_ID
           value: Kubernetes
         - name: ISTIO_META_INTERCEPTION_MODE
@@ -125,8 +128,8 @@ spec:
             cpu: "2"
             memory: 1Gi
           requests:
-            cpu: 100m
-            memory: 128Mi
+            cpu: 10m
+            memory: 40Mi
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -178,8 +181,8 @@ spec:
             cpu: "2"
             memory: 1Gi
           requests:
-            cpu: 100m
-            memory: 128Mi
+            cpu: 10m
+            memory: 40Mi
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -193,7 +196,7 @@ spec:
           runAsGroup: 0
           runAsNonRoot: false
           runAsUser: 0
-      serviceAccountName: sleep
+      serviceAccountName: httpbin
       volumes:
       - name: workload-socket
       - name: workload-certs
@@ -221,9 +224,5 @@ spec:
       - configMap:
           name: istio-ca-root-cert
         name: istiod-ca-cert
-      - name: secret-volume
-        secret:
-          optional: true
-          secretName: sleep-secret
 status: {}
 ---
