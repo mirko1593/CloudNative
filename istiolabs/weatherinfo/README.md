@@ -58,3 +58,11 @@ To deploy `loadgenerator`, update `FRONTEND_HOST` in `manifests/loadgen.yaml` an
 ```bash
 gcloud builds submit --tag gcr.io/gke01-356103/weather-backend-multiple:1.0 backend-multiple/
 ```
+
+create a respy deployment
+```bash
+kubectl create deployment respy --image=meganokeefe/respy:v0.0.1
+
+kubectl exec -it respy-d8fcd6d88-627jp -c respy -- ./respy --u http://weather-backend:5000/versi
+on
+```
