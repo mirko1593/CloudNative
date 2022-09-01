@@ -46,13 +46,13 @@ spec:
         subset: single
         port:
           number: 5000
-      weight: 50
+      weight: 90
     - destination:
         host: weather-backend
         subset: multiple
         port:
           number: 5000
-      weight: 50
+      weight: 10
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule

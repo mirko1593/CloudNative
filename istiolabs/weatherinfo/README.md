@@ -63,6 +63,5 @@ create a respy deployment
 ```bash
 kubectl create deployment respy --image=meganokeefe/respy:v0.0.1
 
-kubectl exec -it respy-d8fcd6d88-627jp -c respy -- ./respy --u http://weather-backend:5000/versi
-on
+kubectl exec -it respy-d8fcd6d88-627jp -c respy -- ./respy --u http://weather-backend:5000/version
 ```
